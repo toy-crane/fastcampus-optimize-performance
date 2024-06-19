@@ -1,3 +1,4 @@
-export default function Home() {
-  return <main>It`s Home</main>;
+// `app/page.tsx` is the UI for the `/` URL
+export default function Page() {
+  return <h1>It`s Home</h1>;
 }
