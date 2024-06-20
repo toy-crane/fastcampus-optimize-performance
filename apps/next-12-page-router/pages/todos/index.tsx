@@ -10,7 +10,7 @@ interface TodosProps {
   todos: Todo[];
 }
 
-const Todos: React.FC<TodosProps> = ({ todos }) => {
+const Todos = ({ todos }: TodosProps) => {
   return (
     <div>
       <h1>Todos</h1>
