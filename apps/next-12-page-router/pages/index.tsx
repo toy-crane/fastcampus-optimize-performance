@@ -8,9 +8,18 @@ export default function Home() {
         <a>Go to About Page</a>
       </Link>
       <h2>blogs</h2>
-      <Link href="/blogs">
-        <a>blog list</a>
-      </Link>
+      <ul>
+        <li>
+          <Link href="/blogs">
+            <a>blog list</a>
+          </Link>
+        </li>
+        <li>
+          <Link href="/todos">
+            <a>Go to Todos List</a>
+          </Link>
+        </li>
+      </ul>
     </div>
   );
 }

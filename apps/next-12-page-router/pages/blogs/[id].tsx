@@ -1,5 +1,6 @@
 import { GetServerSideProps } from "next";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface BlogProps {
   blog: {
@@ -10,13 +11,15 @@ interface BlogProps {
 }
 
 export default function Blog({ blog }: BlogProps) {
+  const router = useRouter();
+
   if (!blog) {
-    return <div>blog not found</div>;
+    return <div>Blog not found</div>;
   }
 
   return (
     <div>
-      <h1>blog Item</h1>
+      <h1>Blog Item</h1>
       <p>
         <strong>ID:</strong> {blog.id}
       </p>
@@ -24,11 +27,15 @@ export default function Blog({ blog }: BlogProps) {
         <strong>Title:</strong> {blog.title}
       </p>
       <p>
-        <strong>content:</strong> {blog.body}
+        <strong>Content:</strong> {blog.body}
+      </p>
+      <p>
+        <strong>Current Path:</strong> {router.asPath}
       </p>
       <Link href="/">
         <a>Back to Home</a>
       </Link>
+      <button onClick={() => router.push("/blogs")}>Go to Blogs List</button>
     </div>
   );
 }
