@@ -1,8 +1,16 @@
 // app/dashboard/page.tsx
+async function getData() {
+  // sleep 5000ms
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+  return "render completed";
+}
+
 export default async function Page() {
+  const data = await getData();
+
   return (
-    <div>
-      <h1>Dashboard</h1>
-    </div>
+    <main>
+      <pre>{data}</pre>
+    </main>
   );
 }
