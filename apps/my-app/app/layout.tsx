@@ -13,10 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={"max-w-[600px] mx-auto"}>
-        <h1>I`m Root</h1>
-        {children}
-      </body>
+      <body className={"max-w-[600px] mx-auto"}>{children}</body>
     </html>
   );
 }
