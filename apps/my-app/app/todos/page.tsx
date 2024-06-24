@@ -1,3 +1,5 @@
+import { Metadata } from "next";
+
 // app/todos/page.tsx
 async function getData() {
   const res = await fetch("https://jsonplaceholder.typicode.com/todos");
@@ -10,6 +12,17 @@ async function getData() {
   }
 
   return res.json();
+}
+
+// 메타 데이터를 동적으로 가져오는 함수
+export async function generateMetadata(): Promise<Metadata> {
+  const response = await fetch("https://jsonplaceholder.typicode.com/todos/1");
+  const post = await response.json();
+
+  return {
+    title: post.title,
+    description: `${post.title} - ${post.completed}`,
+  };
 }
 
 export default async function Page() {
