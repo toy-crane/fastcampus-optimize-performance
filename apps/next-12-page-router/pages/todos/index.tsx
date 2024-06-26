@@ -18,13 +18,13 @@ const Todos = ({ todos }: TodosProps) => {
         {todos.map((todo) => (
           <li key={todo.id}>
             <Link href={`/todos/${todo.id}`}>
-              <a>{todo.title}</a>
+              {todo.title}
             </Link>
           </li>
         ))}
       </ul>
       <Link href="/">
-        <a>Back to Home</a>
+        Back to Home
       </Link>
     </div>
   );

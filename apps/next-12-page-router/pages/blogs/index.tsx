@@ -18,13 +18,13 @@ export default function Blogs({ blogs }: BlogsProps) {
         {blogs.map((blog) => (
           <li key={blog.id}>
             <Link href={`/blogs/${blog.id}`}>
-              <a>{blog.title}</a>
+              {blog.title}
             </Link>
           </li>
         ))}
       </ul>
       <Link href="/">
-        <a>Back to Home</a>
+        Back to Home
       </Link>
     </div>
   );

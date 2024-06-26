@@ -33,7 +33,7 @@ export default function Blog({ blog }: BlogProps) {
         <strong>Current Path:</strong> {router.asPath}
       </p>
       <Link href="/">
-        <a>Back to Home</a>
+        Back to Home
       </Link>
       <button onClick={() => router.push("/blogs")}>Go to Blogs List</button>
     </div>

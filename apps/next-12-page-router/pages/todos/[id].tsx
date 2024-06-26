@@ -27,7 +27,7 @@ export default function Todo({ todo }: TodoProps) {
         <strong>Completed:</strong> {todo.completed ? "Yes" : "No"}
       </p>
       <Link href="/">
-        <a>Back to Home</a>
+        Back to Home
       </Link>
     </div>
   );
