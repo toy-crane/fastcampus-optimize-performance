@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 
 const Colors = [
@@ -44,6 +45,9 @@ const PhoneCard = () => {
 };
 
 async function Page() {
+  const supabase = createClient();
+  const { data } = await supabase.from("phones").select("*");
+
   return (
     <div className="container flex flex-col md:items-center md:w-[720px]">
       <div className="grid grid-cols-2 w-full gap-4 md:gap-24 mt-4 mb-12">
