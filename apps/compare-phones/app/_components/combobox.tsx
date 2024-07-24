@@ -42,7 +42,7 @@ const frameworks = [
   },
 ];
 
-export function PhoneCombobox() {
+export function PhoneCombobox({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -53,11 +53,11 @@ export function PhoneCombobox() {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className={cn("w-full justify-between", className)}
         >
           {value
             ? frameworks.find((framework) => framework.value === value)?.label
-            : "Select framework..."}
+            : "Select"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
