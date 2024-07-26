@@ -14,12 +14,41 @@ import { Cpu, Server } from "lucide-react";
 import ShareButton from "./_components/share-button";
 import { Suspense } from "react";
 import PhoneCardSkeleton from "./_components/phone-card-skeleton";
+import type { Metadata, ResolvingMetadata } from "next";
 
 type PhoneWithColors = Tables<"phones"> & {
   phone_colors: Tables<"phone_colors">[];
 };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: {
+    primary?: string;
+    secondary?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
+  };
+}) {
+  const supabase = createClient();
+  const { data } = await supabase.from("phones").select("*, phone_colors(*)");
+  if (!data) throw new Error("No data");
+
+  const primaryPhone =
+    data.find((phone) => phone.name === searchParams.primary) || data[0];
+  const secondaryPhone =
+    data.find((phone) => phone.name === searchParams.secondary) || data[0];
+
+  const primaryColor =
+    searchParams.primaryColor || primaryPhone.phone_colors[0].name;
+  const secondaryColor =
+    searchParams.secondaryColor || secondaryPhone.phone_colors[0].name;
+
+  return {
+    title: `${primaryPhone.name} ${primaryColor}모델과 ${secondaryPhone.name} ${secondaryColor} 모델을 비교해 보세요.`,
+    description: `${primaryPhone.name}와 ${secondaryPhone.name}의 스마트폰 정보를 비교해 보세요.`,
+  };
+}
 
 const PhoneCard = async ({
   order,
@@ -32,7 +61,6 @@ const PhoneCard = async ({
   selectedPhoneName: string;
   selectedColor: string;
 }) => {
-  await sleep(1000);
   const options = phones.map((phone) => ({
     value: phone.name,
     label: `${phone.name} Phone`,
