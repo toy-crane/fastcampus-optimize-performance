@@ -45,9 +45,9 @@ const PhoneCard = ({
         options={options}
         selectedValue={selectedPhoneName}
       />
-      <div className="relative aspect-[6/10] md:aspect-squre w-full mb-4">
+      <div className="relative aspect-[6/10] md:aspect-square w-full mb-4">
         <Image
-          src="/phones/i14-beige.png"
+          src={`/phones/${selectedPhone.name}-${selectedColor}.png`}
           alt="i14 beige"
           fill={true}
           sizes={"50vw"}
@@ -66,7 +66,7 @@ const PhoneCard = ({
           />
         ))}
       </div>
-      <div className="text-xl font-semibold">베이지</div>
+      <div className="text-xl font-semibold">{selectedColor}</div>
     </div>
   );
 };
