@@ -1,5 +1,5 @@
 import Image from "next/image";
-import localImage from "../../public/phones/i14-black.png";
+import localImage from "../../public/phones/I-14-black.png";
 
 export default function Page() {
   return (
