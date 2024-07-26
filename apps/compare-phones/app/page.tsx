@@ -9,26 +9,33 @@ import {
 import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
+import ColorButton from "./_components/color-button";
 
-const Colors = [
-  { name: "beige", class: "bg-[#f5f5dc] hover:bg-[#f5f5dc]/70" },
-  { name: "grey", class: "bg-[#e5e7eb] hover:bg-[#e5e7eb]/70" },
-  { name: "black", class: "bg-[#1e1e1e] hover:bg-[#1e1e1e]/70" },
-];
+type PhoneWithColors = Tables<"phones"> & {
+  phone_colors: Tables<"phone_colors">[];
+};
 
 const PhoneCard = ({
   order,
   phones,
   selectedPhoneName,
+  selectedColor,
 }: {
   order: "primary" | "secondary";
-  phones: Tables<"phones">[];
+  phones: PhoneWithColors[];
   selectedPhoneName: string;
+  selectedColor: string;
 }) => {
   const options = phones.map((phone) => ({
     value: phone.name,
     label: `${phone.name} Phone`,
   }));
+
+  const selectedPhone = phones.find(
+    (phone) => phone.name === selectedPhoneName
+  );
+
+  if (!selectedPhone) throw new Error("No selected phone");
 
   return (
     <div className="flex flex-col items-center">
@@ -48,12 +55,13 @@ const PhoneCard = ({
         />
       </div>
       <div className="flex gap-3 mb-2">
-        {Colors.map((color, index) => (
-          <button
-            key={index}
+        {selectedPhone.phone_colors.map((color, index) => (
+          <ColorButton
+            key={color.id}
+            colorName={color.name}
+            order={order}
             className={cn(
-              "w-8 h-8 rounded-full hover:border-blue-500 hover:border-2",
-              color.class
+              color.name === selectedColor && "border-2 border-blue-500"
             )}
           />
         ))}
@@ -69,14 +77,23 @@ async function Page({
   searchParams: {
     primary?: string;
     secondary?: string;
+    primaryColor?: string;
+    secondaryColor?: string;
   };
 }) {
   const supabase = createClient();
-  const { data } = await supabase.from("phones").select("*");
+  const { data } = await supabase.from("phones").select("*, phone_colors(*)");
   if (!data) throw new Error("No data");
 
-  const selectedPrimaryName = searchParams.primary || data[0].name;
-  const selectedSecondaryName = searchParams.secondary || data[0].name;
+  const primaryPhone =
+    data.find((phone) => phone.name === searchParams.primary) || data[0];
+  const secondaryPhone =
+    data.find((phone) => phone.name === searchParams.secondary) || data[0];
+
+  const primaryColor =
+    searchParams.primaryColor || primaryPhone.phone_colors[0].name;
+  const secondaryColor =
+    searchParams.secondaryColor || secondaryPhone.phone_colors[0].name;
 
   return (
     <div className="container flex flex-col md:items-center md:w-[720px]">
@@ -84,12 +101,14 @@ async function Page({
         <PhoneCard
           order="primary"
           phones={data}
-          selectedPhoneName={selectedPrimaryName}
+          selectedPhoneName={primaryPhone.name}
+          selectedColor={primaryColor}
         />
         <PhoneCard
           order="secondary"
           phones={data}
-          selectedPhoneName={selectedSecondaryName}
+          selectedPhoneName={secondaryPhone.name}
+          selectedColor={secondaryColor}
         />
       </div>
       <Accordion
