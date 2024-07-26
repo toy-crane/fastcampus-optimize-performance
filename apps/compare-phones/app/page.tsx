@@ -11,14 +11,17 @@ import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import ColorButton from "./_components/color-button";
 import { Cpu, Server } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import ShareButton from "./_components/share-button";
+import { Suspense } from "react";
+import PhoneCardSkeleton from "./_components/phone-card-skeleton";
 
 type PhoneWithColors = Tables<"phones"> & {
   phone_colors: Tables<"phone_colors">[];
 };
 
-const PhoneCard = ({
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const PhoneCard = async ({
   order,
   phones,
   selectedPhoneName,
@@ -29,6 +32,7 @@ const PhoneCard = ({
   selectedPhoneName: string;
   selectedColor: string;
 }) => {
+  await sleep(1000);
   const options = phones.map((phone) => ({
     value: phone.name,
     label: `${phone.name} Phone`,
@@ -102,18 +106,22 @@ async function Page({
   return (
     <div className="container flex flex-col md:items-center md:w-[720px]">
       <div className="grid grid-cols-2 w-full gap-4 md:gap-24 mt-4 mb-4">
-        <PhoneCard
-          order="primary"
-          phones={data}
-          selectedPhoneName={primaryPhone.name}
-          selectedColor={primaryColor}
-        />
-        <PhoneCard
-          order="secondary"
-          phones={data}
-          selectedPhoneName={secondaryPhone.name}
-          selectedColor={secondaryColor}
-        />
+        <Suspense fallback={<PhoneCardSkeleton />}>
+          <PhoneCard
+            order="primary"
+            phones={data}
+            selectedPhoneName={primaryPhone.name}
+            selectedColor={primaryColor}
+          />
+        </Suspense>
+        <Suspense fallback={<PhoneCardSkeleton />}>
+          <PhoneCard
+            order="secondary"
+            phones={data}
+            selectedPhoneName={secondaryPhone.name}
+            selectedColor={secondaryColor}
+          />
+        </Suspense>
       </div>
       <ShareButton className="self-end mb-6">공유하기</ShareButton>
       <Accordion
