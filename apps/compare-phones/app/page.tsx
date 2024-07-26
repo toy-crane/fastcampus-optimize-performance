@@ -53,8 +53,9 @@ const PhoneCard = ({
           src={`/phones/${selectedPhone.name}-${selectedColor}.png`}
           alt="i14 beige"
           fill={true}
-          sizes={"50vw"}
+          sizes={"(max-width: 768px) 50vw, 33vw"}
           objectFit="contain"
+          priority={true}
         />
       </div>
       <div className="flex gap-3 mb-2">
