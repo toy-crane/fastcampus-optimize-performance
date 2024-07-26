@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/utils/supabase/client";
 import Image from "next/image";
 import ColorButton from "./_components/color-button";
+import { Cpu, Server } from "lucide-react";
 
 type PhoneWithColors = Tables<"phones"> & {
   phone_colors: Tables<"phone_colors">[];
@@ -118,18 +119,41 @@ async function Page({
       >
         <AccordionItem value="item-1">
           <AccordionTrigger>요약</AccordionTrigger>
-          <AccordionContent>스마트폰 정보를 요약 합니다</AccordionContent>
+          <AccordionContent>
+            <div className="grid grid-cols-2 gap-4">
+              <p className="text-center">{primaryPhone.summary}</p>
+              <p className="text-center">{secondaryPhone.summary}</p>
+            </div>
+          </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-2">
           <AccordionTrigger>저장 용량</AccordionTrigger>
           <AccordionContent>
-            스마트폰 정보를 저장하는 방법을 요약 합니다
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex justify-center items-center">
+                <Server className="h-5 w-5 mr-2" />
+                <p>{primaryPhone.storage}</p>
+              </div>
+              <div className="flex justify-center items-center">
+                <Server className="h-5 w-5 mr-2" />
+                <p>{secondaryPhone.storage}</p>
+              </div>
+            </div>
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="item-3">
           <AccordionTrigger>칩</AccordionTrigger>
           <AccordionContent>
-            스마트폰 정보를 저장하는 방법을 요약 합니다
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex justify-center items-center">
+                <Cpu className="h-5 w-5 mr-2" />
+                <p>{primaryPhone.chip}</p>
+              </div>
+              <div className="flex justify-center items-center">
+                <Cpu className="h-5 w-5 mr-2" />
+                <p>{secondaryPhone.chip}</p>
+              </div>
+            </div>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
