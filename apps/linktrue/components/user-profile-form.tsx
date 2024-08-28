@@ -7,7 +7,7 @@ import { Input } from "./ui/input";
 import { useRef } from "react";
 import { uploadAvatar } from "@/lib/action";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -17,6 +17,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./ui/form";
+import { X } from "lucide-react";
 
 const formSchema = z.object({
   name: z.string().min(1, "이름은 필수입니다."),
@@ -25,11 +26,23 @@ const formSchema = z.object({
   avatarUrl: z.string(),
   githubUrl: z.string(),
   twitterUrl: z.string(),
+  links: z.array(
+    z.object({
+      url: z.string(),
+      title: z.string().min(1, "제목은 필수입니다."),
+    })
+  ),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
-const UserProfileForm = ({ profile }: { profile: Tables<"profiles"> }) => {
+const UserProfileForm = ({
+  profile,
+  links,
+}: {
+  profile: Tables<"profiles">;
+  links: Tables<"links">[];
+}) => {
   const [previewImage, setPreviewImage] = useState<string | null>(
     profile.avatar_url
   );
@@ -44,6 +57,7 @@ const UserProfileForm = ({ profile }: { profile: Tables<"profiles"> }) => {
       avatarUrl: profile.avatar_url ?? "",
       githubUrl: profile.github_url ?? "",
       twitterUrl: profile.twitter_url ?? "",
+      links,
     },
   });
 
@@ -51,6 +65,11 @@ const UserProfileForm = ({ profile }: { profile: Tables<"profiles"> }) => {
     console.log("Saving profile:", data);
     // 여기서 데이터를 백엔드로 전송합니다
   };
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "links",
+  });
 
   const handleAvatarUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -72,6 +91,10 @@ const UserProfileForm = ({ profile }: { profile: Tables<"profiles"> }) => {
 
   const triggerAvatarUpload = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleAddLink = () => {
+    append({ url: "", title: "" });
   };
 
   return (
@@ -163,6 +186,63 @@ const UserProfileForm = ({ profile }: { profile: Tables<"profiles"> }) => {
               </FormItem>
             )}
           />
+
+          <div>
+            <div className="mb-2">
+              <FormLabel>My Link</FormLabel>
+            </div>
+            <div className="space-y-2">
+              {fields.map((field, index) => (
+                <div key={field.id}>
+                  <FormItem>
+                    <div className="flex space-x-2">
+                      <FormField
+                        control={form.control}
+                        name={`links.${index}.title`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input placeholder="링크 제목" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name={`links.${index}.url`}
+                        render={({ field }) => (
+                          <FormItem className="flex-1">
+                            <FormControl>
+                              <Input placeholder="링크 URL" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => remove(index)}
+                        className="shrink-0"
+                      >
+                        <X />
+                      </Button>
+                    </div>
+                  </FormItem>
+                </div>
+              ))}
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              className="mt-2"
+              onClick={handleAddLink}
+            >
+              링크 추가
+            </Button>
+          </div>
           <div className="flex justify-center">
             <Button className="w-full">저장하기</Button>
           </div>

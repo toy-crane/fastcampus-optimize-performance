@@ -21,9 +21,18 @@ async function Page() {
     throw error;
   }
 
+  const { data: links, error: linksError } = await supabase
+    .from("links")
+    .select("*")
+    .eq("user_id", profile.id);
+
+  if (linksError) {
+    throw linksError;
+  }
+
   return (
     <div className="container">
-      <UserProfileForm profile={profile} />
+      <UserProfileForm profile={profile} links={links} />
     </div>
   );
 }
