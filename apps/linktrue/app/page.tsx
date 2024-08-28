@@ -1,14 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { createClient } from "@/utils/supabase/server";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "LinkTrue",
+  description: "LinkTrue로 링크 모음을 만들고 공유하세요.",
+};
 
 async function Page() {
-  const supabase = createClient();
-
-  return (
-    <div className="container">
-      <Button>Hello</Button>
-    </div>
-  );
+  return <div className="container"></div>;
 }
 
 export default Page;
