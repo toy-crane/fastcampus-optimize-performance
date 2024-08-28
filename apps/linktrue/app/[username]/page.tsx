@@ -26,23 +26,23 @@ async function getOgImage(url: string): Promise<string | null> {
 const Page = async ({ params }: { params: { username: string } }) => {
   const supabase = createClient();
 
-  const { data: profile, error: profileError } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
-    .select("*")
+    .select(
+      `
+    *,
+    links (*)
+  `
+    )
     .eq("username", params.username)
     .single();
-  if (profileError) {
-    throw profileError;
+
+  if (error) {
+    throw error;
   }
 
-  const { data: links, error: linksError } = await supabase
-    .from("links")
-    .select("*")
-    .eq("user_id", profile.id);
-
-  if (linksError) {
-    throw linksError;
-  }
+  const profile = data;
+  const links = data.links;
 
   const linksWithOgImages = await Promise.all(
     links.map(async (link: Tables<"links">) => ({
@@ -52,7 +52,7 @@ const Page = async ({ params }: { params: { username: string } }) => {
   );
 
   return (
-    <main className="flex min-h-screen flex-col p-24 items-center">
+    <main className="flex min-h-screen flex-col items-center">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center pt-10 pb-6">
           <Avatar className="w-24 h-24 mb-4">
@@ -77,10 +77,10 @@ const Page = async ({ params }: { params: { username: string } }) => {
               </Link>
             )}
           </div>
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 max-w-[400px] w-full px-4">
             {linksWithOgImages.map((link) => (
               <Link href={link.url} key={link.id}>
-                <Card className="w-[400px]">
+                <Card>
                   <CardContent className="flex p-4 space-x-6 items-center">
                     <div className="w-16 h-16 rounded-xl overflow-hidden relative">
                       <Image
