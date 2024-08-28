@@ -1,5 +1,7 @@
+import { GithubIcon, XIcon } from "@/components/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { createClient } from "@/utils/supabase/server";
+import Link from "next/link";
 
 const Page = async ({ params }: { params: { username: string } }) => {
   const supabase = createClient();
@@ -36,6 +38,18 @@ const Page = async ({ params }: { params: { username: string } }) => {
           </Avatar>
           <h1 className="text-2xl font-bold mb-2">@{profile.username}</h1>
           <p className="text-gray-600 text-center mb-4">{profile.bio}</p>
+          <div className="flex gap-4 justify-center">
+            {profile.github_url && (
+              <Link href={profile.github_url}>
+                <GithubIcon className="w-8 h-8" />
+              </Link>
+            )}
+            {profile.twitter_url && (
+              <Link href={profile.twitter_url}>
+                <XIcon className="w-8 h-8" />
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </main>
