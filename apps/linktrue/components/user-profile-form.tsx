@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { useRef } from "react";
-import { uploadAvatar } from "@/lib/action";
+import { updateProfile, uploadAvatar } from "@/lib/action";
 import { z } from "zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,8 +18,9 @@ import {
   FormMessage,
 } from "./ui/form";
 import { X } from "lucide-react";
+import { useRouter } from "next/navigation";
 
-const formSchema = z.object({
+export const formSchema = z.object({
   name: z.string().min(1, "이름은 필수입니다."),
   username: z.string().min(1, "사용자 이름은 필수입니다."),
   bio: z.string(),
@@ -47,6 +48,7 @@ const UserProfileForm = ({
     profile.avatar_url
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -61,9 +63,9 @@ const UserProfileForm = ({
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    console.log("Saving profile:", data);
-    // 여기서 데이터를 백엔드로 전송합니다
+  const onSubmit = async (data: FormData) => {
+    await updateProfile(data);
+    router.push("/");
   };
 
   const { fields, append, remove } = useFieldArray({
@@ -85,12 +87,9 @@ const UserProfileForm = ({
       const formData = new FormData();
       formData.append("file", file);
       formData.append("userId", profile.id);
-      await uploadAvatar(formData);
+      const publicUrl = await uploadAvatar(formData);
+      form.setValue("avatarUrl", publicUrl);
     }
-  };
-
-  const triggerAvatarUpload = () => {
-    fileInputRef.current?.click();
   };
 
   const handleAddLink = () => {
@@ -103,15 +102,25 @@ const UserProfileForm = ({
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <h1 className="text-3xl font-bold text-left">마이 페이지</h1>
           <div className="flex flex-col items-center space-y-2">
-            <Avatar
-              className="w-16 h-16 cursor-pointer"
-              onClick={triggerAvatarUpload}
-            >
-              <AvatarImage src={previewImage || ""} alt="User avatar" />
-              <AvatarFallback className="hover:bg-muted/50">
-                {profile.username.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
+            <FormField
+              control={form.control}
+              name="avatarUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Avatar
+                      className="w-16 h-16 cursor-pointer"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <AvatarImage src={field.value || ""} alt="User avatar" />
+                      <AvatarFallback className="hover:bg-muted/50">
+                        User
+                      </AvatarFallback>
+                    </Avatar>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
             <Input
               ref={fileInputRef}
               id="avatar-upload"
@@ -244,7 +253,9 @@ const UserProfileForm = ({
             </Button>
           </div>
           <div className="flex justify-center">
-            <Button className="w-full">저장하기</Button>
+            <Button className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "저장중..." : "저장하기"}
+            </Button>
           </div>
         </form>
       </Form>
